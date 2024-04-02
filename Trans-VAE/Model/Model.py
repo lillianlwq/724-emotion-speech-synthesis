@@ -83,8 +83,10 @@ class Transformer(nn.Module):
 
         transformer = Transformer(encoder, decoder, src_embed, trg_embed, src_pos, trg_pos, projection)
 
-        # Initialize the paramaters
-        for param in transformer.parameters():
-            if param.dim() > 1:
+        for p in transformer.parameters():
+            if p.dim() > 1:
+                nn.init.xavier_uniform_(p)
+
+        return transformer
                 
 
