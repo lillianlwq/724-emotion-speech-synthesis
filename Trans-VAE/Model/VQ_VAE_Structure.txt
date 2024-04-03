@@ -1,0 +1,40 @@
+VQ_VAE(
+  (_encoder): Encoder(
+    (_conv_1): Conv2d(3, 64, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
+    (_conv_2): Conv2d(64, 128, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
+    (_conv_3): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (_residual_stack): ResidualStack(
+      (_layers): ModuleList(
+        (0-1): 2 x Residual(
+          (_block): Sequential(
+            (0): ReLU(inplace=True)
+            (1): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (2): ReLU(inplace=True)
+            (3): Conv2d(32, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          )
+        )
+      )
+    )
+  )
+  (_pre_vq_conv): Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1))
+  (_vq_vae): VectorQuantizerEMA(
+    (_embedding): Embedding(512, 64)
+  )
+  (_decoder): Decoder(
+    (_conv_1): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (_residual_stack): ResidualStack(
+      (_layers): ModuleList(
+        (0-1): 2 x Residual(
+          (_block): Sequential(
+            (0): ReLU(inplace=True)
+            (1): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (2): ReLU(inplace=True)
+            (3): Conv2d(32, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          )
+        )
+      )
+    )
+    (_conv_trans_1): ConvTranspose2d(128, 64, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
+    (_conv_trans_2): ConvTranspose2d(64, 3, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
+  )
+)

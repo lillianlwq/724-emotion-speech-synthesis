@@ -6,7 +6,6 @@ import math
 
 from torchaudio.models.wav2vec2.components import SelfAttention
 
-
 class InputEmbedding(nn.Module):
     def __init__(self, d_model: int, n_vocab: int):
         super(InputEmbedding, self).__init__()
