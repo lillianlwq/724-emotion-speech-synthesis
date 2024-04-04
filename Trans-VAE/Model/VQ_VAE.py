@@ -218,7 +218,7 @@ class Decoder(nn.Module):
                                                 stride=2, padding=1)
 
         self._conv_trans_2 = nn.ConvTranspose2d(in_channels=num_hiddens // 2,
-                                                out_channels=3,
+                                                out_channels=1,
                                                 kernel_size=4,
                                                 stride=2, padding=1)
 
@@ -238,7 +238,7 @@ class VQ_VAE(nn.Module):
                  num_embeddings, embedding_dim, commitment_cost, decay=0):
         super(VQ_VAE, self).__init__()
 
-        self._encoder = Encoder(3, num_hiddens,
+        self._encoder = Encoder(1, num_hiddens,
                                 num_residual_layers,
                                 num_residual_hiddens)
         self._pre_vq_conv = nn.Conv2d(in_channels=num_hiddens,
@@ -263,3 +263,11 @@ class VQ_VAE(nn.Module):
         x_recon = self._decoder(quantized)
 
         return loss, x_recon, perplexity
+
+
+def vq_vae_loss(input, target):
+    # Trim the larger tensor to match the size of the smaller tensor
+    min_width = min(input.size(3), target.size(3))
+    input_trimmed = input[:, :, :, :min_width]
+    target_trimmed = target[:, :, :, :min_width]
+    return F.mse_loss(input_trimmed, target_trimmed)
