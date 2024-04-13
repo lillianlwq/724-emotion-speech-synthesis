@@ -7,18 +7,19 @@ import math
 from torchaudio.models.wav2vec2.components import SelfAttention
 
 class InputEmbedding(nn.Module):
-    def __init__(self, d_model: int, n_vocab: int):
+    def __init__(self, d_model, n_vocab):
         super(InputEmbedding, self).__init__()
         self.d_model = d_model
         self.vocab_size = n_vocab
         self.embedding = nn.Embedding(self.vocab_size, self.d_model)
 
     def forward(self, x):
+        x = x.long()
         return self.embedding(x) * math.sqrt(self.d_model)
 
 
 class PositionalEncoding(nn.Module):
-    def __init__(self, d_model: int, seq_len: int, dropout: float):
+    def __init__(self, d_model, seq_len, dropout):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(dropout)
         self.d_model = d_model
@@ -41,7 +42,7 @@ class PositionalEncoding(nn.Module):
 
     def forward(self, x):
         x = x + (self.pe[:, :x.shape[1], :]).requires_grad_(False)
-        return x.dropout(x)
+        return self.dropout(x)
 
 
 class LayerNorm(nn.Module):
@@ -58,7 +59,7 @@ class LayerNorm(nn.Module):
 
 
 class FeedForwardBlock(nn.Module):
-    def __init__(self, d_model: int, d_ff: int, dropout: float):
+    def __init__(self, d_model, d_ff, dropout):
         super(FeedForwardBlock, self).__init__()
         self.linear_1 = nn.Linear(d_model, d_ff, bias=True)
         self.dropout = nn.Dropout(dropout)
@@ -70,7 +71,7 @@ class FeedForwardBlock(nn.Module):
 
 
 class MultiHeadAttentionBlock(nn.Module):
-    def __init__(self, d_model: int, h: int, dropout: float):
+    def __init__(self, d_model, h, dropout):
         super(MultiHeadAttentionBlock, self).__init__()
         self.d_model = d_model
         self.h = h
@@ -116,7 +117,7 @@ class MultiHeadAttentionBlock(nn.Module):
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, dropout: float):
+    def __init__(self, dropout):
         super(ResidualBlock, self).__init__()
         self.dropout = nn.Dropout(dropout)
         self.norm = LayerNorm()
@@ -184,7 +185,7 @@ class Decoder(nn.Module):
 
 
 class ProjectionLayer(nn.Module):
-    def __init__(self, d_model: int, vocab_size: int):
+    def __init__(self, d_model, vocab_size):
         super(ProjectionLayer, self).__init__()
         self.projection = nn.Linear(d_model, vocab_size)
 
